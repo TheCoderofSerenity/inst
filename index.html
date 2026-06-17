@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Adnan Raza | Premium Influencer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#090909;color:#fff}
+:root{--gold:#ffd000}
+nav{position:fixed;top:0;width:100%;padding:15px 5%;display:flex;justify-content:space-between;background:#000c;backdrop-filter:blur(10px);z-index:999}
+.logo{color:var(--gold);font-weight:700}
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url('https://picsum.photos/1600/900') center/cover}
+.hero h1{font-size:4rem;color:var(--gold)}
+.btn{background:var(--gold);padding:12px 24px;color:#000;text-decoration:none;border-radius:30px;font-weight:bold}
+section{padding:80px 5%}
+.title{text-align:center;color:var(--gold);margin-bottom:25px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:#141414;padding:20px;border-radius:15px}
+.gallery img{
+    width:100%;
+    max-height:600px;
+    height:auto;
+    object-fit:contain;
+    border-radius:15px;
+    background:#111;
+}
+#admin{display:none;position:fixed;right:10px;top:70px;width:320px;background:#111;padding:15px;border:1px solid var(--gold);border-radius:12px;z-index:1000}
+input,textarea{width:100%;margin:5px 0;padding:10px;background:#222;color:#fff;border:1px solid #444}
+button{width:100%;padding:10px;background:var(--gold);border:none}
+footer{text-align:center;padding:20px;border-top:1px solid #222}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="logo">ADNAN RAZA</div>
+<div>Fitness • Travel • Lifestyle</div>
+</nav>
+
+<div class="hero" id="hero">
+<div>
+<h1>ADNAN RAZA</h1>
+<p id="bio">JHU Student • Fitness Creator • TitanFit Partner • Guardian GNC Collaborator</p><br>
+<a id="insta" class="btn" href="#">Instagram</a>
+</div>
+</div>
+
+<section>
+<h2 class="title">Content Categories</h2>
+<div class="grid">
+<div class="card">🏋️ Fitness</div>
+<div class="card">🌍 Travel</div>
+<div class="card">🎬 Reels</div>
+<div class="card">✨ Lifestyle</div>
+</div>
+</section>
+
+<section>
+<h2 class="title">Gallery</h2>
+<div class="grid gallery" id="gallery">
+<img src="https://picsum.photos/400/500?1">
+<img src="https://picsum.photos/400/500?2">
+<img src="https://picsum.photos/400/500?3">
+</div>
+</section>
+
+<section>
+<h2 class="title">Collaborations</h2>
+<div class="grid">
+<div class="card">TitanFit Partner</div>
+<div class="card">Guardian GNC Collaborator</div>
+</div>
+</section>
+
+<div id="admin">
+<h3>Admin Panel</h3>
+<input id="bioInput" placeholder="Bio">
+<input id="instaInput" placeholder="Instagram URL">
+<input type="file" id="heroUpload">
+<input type="file" id="galleryUpload" multiple>
+<button onclick="saveData()">Save</button>
+</div>
+
+<footer>© Adnan Raza</footer>
+
+<script>
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='a'){
+  let p=prompt('Password');
+  if(p==='admin123') document.getElementById('admin').style.display='block';
+ }
+});
+
+function saveData(){
+ localStorage.setItem('bio',bioInput.value);
+ localStorage.setItem('insta',instaInput.value);
+
+ let hero=heroUpload.files[0];
+ if(hero){
+  let r=new FileReader();
+  r.onload=()=>{localStorage.setItem('hero',r.result);apply();};
+  r.readAsDataURL(hero);
+ }
+
+ let files=[...galleryUpload.files];
+ if(files.length){
+  Promise.all(files.map(f=>new Promise(res=>{
+   let r=new FileReader();
+   r.onload=()=>res(r.result);
+   r.readAsDataURL(f);
+  }))).then(imgs=>{
+   localStorage.setItem('gallery',JSON.stringify(imgs));
+   apply();
+  });
+ }
+
+ apply();
+}
+
+function apply(){
+ if(localStorage.bio) bio.textContent=localStorage.bio;
+ if(localStorage.insta) insta.href=localStorage.insta;
+ if(localStorage.hero){
+  hero.style.background="linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url('"+localStorage.hero+"') center/cover";
+ }
+ if(localStorage.gallery){
+  let imgs=JSON.parse(localStorage.gallery);
+  gallery.innerHTML='';
+  imgs.forEach(i=>gallery.innerHTML+=`<img src="${i}">`);
+ }
+}
+apply();
+</script>
+</body>
+</html>
